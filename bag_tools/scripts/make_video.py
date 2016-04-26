@@ -56,7 +56,7 @@ def create_video(tmp_dir, args):
     i = i + 1
 
   rospy.loginfo('Creating video...')
-  cmd = ["ffmpeg", "-f", "image2", "-r", str(args.fps), "-i", tmp_dir + "/img-%d.jpg", args.output]
+  cmd = ["avconv", "-f", "image2", "-r", str(args.fps), "-i", tmp_dir + "/img-%d.jpg", "-c:v", "libx264", "-crf", str(args.crf), args.output]
   rospy.loginfo('    {}'.format(' '.join(cmd)))
   subprocess.call(cmd)
 
@@ -73,6 +73,7 @@ if __name__ == "__main__":
   parser.add_argument('topic', help='topic of the images to use')
   parser.add_argument('--output', help='name of the output video. Note that the file ending defines the codec to use.', default='video.mp4')
   parser.add_argument('--fps', help='frames per second in the output video, as long as codec supports this', type=int, default=20)
+  parser.add_argument('--crf', help='Constant rate factor', type=int, default=25)
   parser.add_argument('inbag', help='input bagfile(s)', nargs='+')
   args = parser.parse_args()
   tmp_dir = tempfile.mkdtemp()
